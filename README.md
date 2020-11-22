@@ -32,9 +32,7 @@ aws configure
 All default are ok, when created note down both url and arn
 
 4. Create your teams nosql database
-![dynamodb](./docs/img/dynamo1.png)
-![dynamodb](./docs/img/dynamo2.png)
-![dynamodb](./docs/img/dynamo3.png)
+[nosql dynamodb setup tip](./docs/databasetip.md)
 
 
 ## Local development
