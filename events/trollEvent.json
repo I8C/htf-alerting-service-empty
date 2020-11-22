@@ -1,0 +1,18 @@
+{
+    "version": "0",
+    "id": "c4519566-0742-2c9e-ce80-b4edb512276d",
+    "detail-type": "trollEvent",
+    "source": "be.i8c.htf.trollevents.reddit",
+    "account": "302948092384",
+    "time": "2020-11-22T16:36:46Z",
+    "region": "eu-central-1",
+    "resources": [],
+    "detail": {
+        "id": "jyyki3",
+        "url": "https://www.reddit.com/r/AskReddit/comments/jyyki3/bob_the_builder_visits_your_house_and_offers_to/",
+        "text": "Bob the Builder visits your house and offers to fix or upgrade something. What would it be?",
+        "author": "WhoArtThyI",
+        "context": "AskReddit",
+        "created_utc": 1606063006
+    }
+}

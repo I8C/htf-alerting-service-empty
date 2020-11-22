@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template for HTF AWS Troll Alerting Service - Core Troll Alerting Service
+
+Parameters:
+
+    UserPreferencesTable:
+        Description: Name of the dynamoDb table which you created manually in the AWS web console
+        Default: "HTFUserPreferences"
+        Type: String
+
+    EventbusArn:
+        Description: Name of the eventbridge bus which you created manually in the AWS web console
+        Default: "arn:aws:events:eu-central-1:19823479384:event-bus/htf-example"
+        Type: String
+    
+    MSTeamsSQSUrl:
+        Description: ARN of the SQS queue which you created manually in the AWS web console
+        Default: "https://sqs.eu-central-1.amazonaws.com/19823479384/yourteamname-SQS-MSTEAMS"
+        Type: String
+    TwilioSQSUrl:
+        Description: ARN of the SQS queue which you created manually in the AWS web console
+        Default: "https://sqs.eu-central-1.amazonaws.com/19823479384/yourqueue"
+        Type: String
+
+
+  
+Resources:
+
+# -----------------------------
+# Functions
+# -----------------------------
+
+  FnTrollEventHandler:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ../src/fn-trollEventsHandler/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Timeout: 10
+      Environment:
+        Variables:
+          UserPreferencesTable: !Sub ${UserPreferencesTable}
+          TwilioSQSUrl: !Sub ${TwilioSQSUrl}
+          MSTeamsSQSUrl: !Sub ${MSTeamsSQSUrl}
+      Events:
+        EventBridgeBusinessAnomalyRule:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: !Sub ${EventbusArn}
+            Pattern: 
+              source: 
+                - be.i8c.htf.trollevents.reddit
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:Query'
+            Resource:
+              - 'Fn::Sub': 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${UserPreferencesTable}*'
+              - 'Fn::Sub': 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${UserPreferencesTable}'
+          - Effect: Allow
+            Action:
+              - 'sqs:SendMessage'
+            Resource:
+              - '*'
+          - Effect: Allow
+            Action:
+              - 'comprehend:DetectSentiment'
+            Resource:
+              - '*'
+          - Effect: Allow
+            Action:
+              - 'ray:PutTraceSegments'
+              - 'xray:PutTelemetryRecords'
+            Resource: 
+              - '*'
+          

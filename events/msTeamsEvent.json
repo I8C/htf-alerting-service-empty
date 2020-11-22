@@ -1,0 +1,10 @@
+{
+    "Records": [
+      {
+        "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
+        "body": "{\"url\":\"https:\/\/outlook.office.com\/webhook\/6991baqksjdfklqsjdflkjsqldkfjlsqkdjf7c913fbdced9\/IncomingWebhook\/3lmqksdjflmqsdf3fb2614b\/f32qklfsdjfklqsjdlkfjlqsd82\",\"message\":\"New NEUTRAL message found on be.i8c.htf.trollevents.reddit. From author WhoArtThyI in context of AskReddit. Link to message: https:\/\/www.reddit.com\/r\/AskReddit\/comments\/jyyki3\/bob_the_builder_visits_your_house_and_offers_to\/\"}",
+        "eventSource": "aws:sqs",
+        "awsRegion": "eu-central-1"
+      }
+    ]
+  }

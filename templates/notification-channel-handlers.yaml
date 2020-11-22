@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template for HTF AWS Troll Alerting Service - channel handlers
+
+Parameters:
+
+    MSTeamsSQSArn:
+        Default: "arn:aws:sqs:eu-central-1:19823479384:TEAMA-SQS-MSTEAMS"
+        Type: String
+  
+Resources:
+
+# -----------------------------
+# Functions
+# -----------------------------
+
+  FnChannelHandlerMSTeams:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ../src/fn-channelHandlerMSTeams/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Timeout: 10
+      Environment:
+        Variables:  
+            MSTeamsSQSArn: !Sub ${MSTeamsSQSArn}
+      Events:
+        SQSEvent:
+            Type: SQS
+            Properties:
+                Queue: !Sub ${MSTeamsSQSArn}
+                BatchSize: 1
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - 'ray:PutTraceSegments'
+              - 'xray:PutTelemetryRecords'
+            Resource: 
+              - '*'

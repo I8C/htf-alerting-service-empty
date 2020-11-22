@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template for HTF AWS Troll Alerting Service - Event Source Adapters
+
+Parameters:
+
+    RedditUserAgent:
+        Default: "A random string"
+        Type: String
+
+    RedditClientId:
+        Default: ""
+        Type: String
+
+    RedditClientSecret:
+        Default: ""
+        Type: String
+
+    RedditRefreshToken:
+        Default: ""
+        Type: String
+
+    RedditSubreddit:
+        Default: "AskReddit"
+        Type: String
+    
+    EventbusArn:
+        Description: Name of the Amazon EventBridge bus to which events are published to be processed.
+        Default: "arn:aws:events:eu-central-1:19823479384:event-bus/htf-yourteamnaam"
+        Type: String
+
+    
+  
+Resources:
+
+# -----------------------------
+# Functions
+# -----------------------------
+
+  FnSourceAdapterReddit:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ../src/fn-sourceAdapterReddit/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Timeout: 10
+      Environment:
+        Variables:  
+            RedditUserAgent: !Sub ${RedditUserAgent}
+            RedditClientId: !Sub ${RedditClientId}
+            RedditClientSecret: !Sub ${RedditClientSecret}
+            RedditRefreshToken: !Sub ${RedditRefreshToken}
+            RedditSubreddit: !Sub ${RedditSubreddit}
+            EventbusArn: !Sub ${EventbusArn}
+      Events:
+        CWSchedule:
+            Type: Schedule
+            Properties:
+                Schedule: 'rate(30 minutes)'
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - 'events:PutEvents'
+            Resource: 
+              - !Sub ${EventbusArn}
+          - Effect: Allow
+            Action:
+              - 'ray:PutTraceSegments'
+              - 'xray:PutTelemetryRecords'
+            Resource: 
+              - '*'
